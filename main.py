@@ -114,7 +114,7 @@ def extractDigits(number):
 
 class Dino():
     def __init__(self,sizex=-1,sizey=-1):
-        self.images,self.rect = load_sprite_sheet('dino.png',5,1,sizex,sizey,-1)
+        self.images,self.rect = load_sprite_sheet('ninja.png',5,1,sizex,sizey,-1)
         self.images1,self.rect1 = load_sprite_sheet('dino_ducking.png',2,1,59,sizey,-1)
         self.rect.bottom = int(0.98*height)
         self.rect.left = width/15
@@ -387,7 +387,7 @@ def gameplay():
                         gameOver = True
 
                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_SPACE:
+                        if event.key == pygame.K_SPACE  :
                             if playerDino.rect.bottom == int(0.98*height):
                                 playerDino.isJumping = True
                                 if pygame.mixer.get_init() != None:
@@ -396,7 +396,7 @@ def gameplay():
 
                         if event.key == pygame.K_DOWN:
                             if not (playerDino.isJumping and playerDino.isDead):
-                                playerDino.isDucking = True
+                                playerDino.isDucking = False
 
                     if event.type == pygame.KEYUP:
                         if event.key == pygame.K_DOWN:
@@ -436,7 +436,7 @@ def gameplay():
 
             playerDino.update()
             cacti.update()
-            pteras.update()
+            #pteras.update()
             clouds.update()
             new_ground.update()
             scb.update(playerDino.score)
@@ -451,7 +451,7 @@ def gameplay():
                     highsc.draw()
                     screen.blit(HI_image,HI_rect)
                 cacti.draw(screen)
-                pteras.draw(screen)
+                #pteras.draw(screen)
                 playerDino.draw()
 
                 pygame.display.update()
