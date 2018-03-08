@@ -5,8 +5,10 @@ import sys
 import pygame
 import random
 from pygame import *
+from NeuroPy import NeuroPy
 
 pygame.init()
+#neuropy =  NeuroPy("COM4")
 
 scr_size = (width,height) = (600,150)
 FPS = 60
@@ -337,6 +339,7 @@ def introscreen():
         clock.tick(FPS)
         if temp_dino.isJumping == False and temp_dino.isBlinking == False:
             gameStart = True
+            neuropy.start()
 
 def gameplay():
     global high_score
@@ -385,9 +388,11 @@ def gameplay():
                     if event.type == pygame.QUIT:
                         gameQuit = True
                         gameOver = True
-
+                    
+                    attention = neuropy.attention
                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_SPACE  :
+                        #if event.key == pygame.K_SPACE  :
+                        if attention >= 70:
                             if playerDino.rect.bottom == int(0.98*height):
                                 playerDino.isJumping = True
                                 if pygame.mixer.get_init() != None:
