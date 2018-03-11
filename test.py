@@ -1,7 +1,7 @@
 from NeuroPy import NeuroPy
 from time import sleep
 
-neuropy = NeuroPy("COM4")
+neuropy = NeuroPy("COM3")
 neuropy.start()
 
 while True:

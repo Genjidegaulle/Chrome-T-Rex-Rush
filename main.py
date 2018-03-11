@@ -5,10 +5,13 @@ import sys
 import pygame
 import random
 from pygame import *
+from time import sleep
 from NeuroPy import NeuroPy
 
+neuropy = NeuroPy("COM3")
+data = []
+
 pygame.init()
-#neuropy =  NeuroPy("COM4")
 
 scr_size = (width,height) = (600,150)
 FPS = 60
@@ -293,7 +296,6 @@ class Scoreboard():
             self.temprect.left += self.temprect.width
         self.temprect.left = 0
 
-
 def introscreen():
     temp_dino = Dino(44,47)
     temp_dino.isBlinking = True
@@ -339,7 +341,6 @@ def introscreen():
         clock.tick(FPS)
         if temp_dino.isJumping == False and temp_dino.isBlinking == False:
             gameStart = True
-            neuropy.start()
 
 def gameplay():
     global high_score
@@ -384,24 +385,23 @@ def gameplay():
                 gameQuit = True
                 gameOver = True
             else:
+                attention = neuropy.attention
+                print(attention)
+                if attention >= 10:
+                    #if event.key == pygame.K_SPACE:
+                    if playerDino.rect.bottom == int(0.98*height):
+                            playerDino.isJumping = True
+                            if pygame.mixer.get_init() != None:
+                                jump_sound.play()
+                            playerDino.movement[1] = -1*playerDino.jumpSpeed
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         gameQuit = True
                         gameOver = True
                     
-                    attention = neuropy.attention
-                    if event.type == pygame.KEYDOWN:
-                        #if event.key == pygame.K_SPACE  :
-                        if attention >= 70:
-                            if playerDino.rect.bottom == int(0.98*height):
-                                playerDino.isJumping = True
-                                if pygame.mixer.get_init() != None:
-                                    jump_sound.play()
-                                playerDino.movement[1] = -1*playerDino.jumpSpeed
-
-                        if event.key == pygame.K_DOWN:
-                            if not (playerDino.isJumping and playerDino.isDead):
-                                playerDino.isDucking = False
+                        #if event.key == pygame.K_DOWN:
+                            #if not (playerDino.isJumping and playerDino.isDead):
+                                #playerDino.isDucking = False
 
                     if event.type == pygame.KEYUP:
                         if event.key == pygame.K_DOWN:
@@ -440,7 +440,7 @@ def gameplay():
                 Cloud(width,random.randrange(height/5,height/2))
 
             playerDino.update()
-            cacti.update()
+            #cacti.update()
             #pteras.update()
             clouds.update()
             new_ground.update()
@@ -474,6 +474,7 @@ def gameplay():
             counter = (counter + 1)
 
         if gameQuit:
+            neuropy.stop()
             break
 
         while gameOver:
@@ -507,6 +508,7 @@ def gameplay():
     quit()
 
 def main():
+    neuropy.start()
     isGameQuit = introscreen()
     if not isGameQuit:
         gameplay()
