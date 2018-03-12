@@ -209,8 +209,8 @@ class Ptera(pygame.sprite.Sprite):
     def __init__(self,speed=5,sizex=-1,sizey=-1):
         pygame.sprite.Sprite.__init__(self,self.containers)
         self.images,self.rect = load_sprite_sheet('ptera.png',2,1,sizex,sizey,-1)
-        self.ptera_height = [height*0.82,height*0.75,height*0.60]
-        self.rect.centery = self.ptera_height[random.randrange(0,3)]
+        self.ptera_height = [height*0.25,height*0.5]
+        self.rect.centery = self.ptera_height[random.randrange(0,2)]
         self.rect.left = width + self.rect.width
         self.image = self.images[0]
         self.movement = [-1*speed,0]
@@ -409,6 +409,7 @@ def gameplay():
     while not gameQuit:
         while startMenu:
             pass
+        att = 0
         while not gameOver:
             if pygame.display.get_surface() == None:
                 print("Couldn't load display surface")
@@ -416,6 +417,9 @@ def gameplay():
                 gameOver = True
             else:
                 sleep(0.005)
+                if(att != neuropy.attention):
+                    data.append(att)
+                    att = neuropy.attention
                 if neuropy.attention >= 45:
                     #if event.key == pygame.K_SPACE:
                     if playerDino.rect.bottom == int(0.98*height):
@@ -424,10 +428,10 @@ def gameplay():
                                 jump_sound.play()
                             playerDino.movement[1] = -1*playerDino.jumpSpeed
                             
-                #for event in pygame.event.get():
-                #    if event.type == pygame.QUIT:
-                #        gameQuit = True
-                #        gameOver = True
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        gameQuit = True
+                        gameOver = True
                     
                         #if event.key == pygame.K_DOWN:
                             #if not (playerDino.isJumping and playerDino.isDead):
@@ -453,7 +457,7 @@ def gameplay():
                     last_obstacle.add(Cactus(gamespeed,40,40))
                 else:
                     for l in last_obstacle:
-                        if l.rect.right < width*0.7 and random.randrange(0,50) == 10:
+                        if l.rect.right < width*0.7 and random.randrange(0,50) == 10:   
                             last_obstacle.empty()
                             last_obstacle.add(Cactus(gamespeed, 40, 40))
 
@@ -503,10 +507,6 @@ def gameplay():
             counter = (counter + 1)
 
         if gameQuit:
-            neuropy.stop()
-            file = open("data.txt", "w")
-            for i in data:
-                file.write("%d\n" % i)
             break
 
         while gameOver:
@@ -519,6 +519,11 @@ def gameplay():
                     if event.type == pygame.QUIT:
                         gameQuit = True
                         gameOver = False
+                        neuropy.stop()
+                        file = open("data.txt", "w")
+                        for i in data:
+                            if(i != 0):
+                                file.write("%d\n" % i)
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
                             gameQuit = True
