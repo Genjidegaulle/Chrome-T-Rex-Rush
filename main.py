@@ -1,4 +1,4 @@
-__author__ = "Shivam Shekhar"
+__author__ = "Shivam Shekhar, edited by COGS 189 Group!"
 
 import os
 import sys
@@ -8,7 +8,7 @@ from pygame import *
 from time import sleep
 from NeuroPy import NeuroPy
 
-neuropy = NeuroPy("COM3")
+neuropy = NeuroPy("COM4")
 data = []
 
 pygame.init()
@@ -209,8 +209,8 @@ class Ptera(pygame.sprite.Sprite):
     def __init__(self,speed=5,sizex=-1,sizey=-1):
         pygame.sprite.Sprite.__init__(self,self.containers)
         self.images,self.rect = load_sprite_sheet('ptera.png',2,1,sizex,sizey,-1)
-        self.ptera_height = [height*0.82,height*0.75,height*0.60]
-        self.rect.centery = self.ptera_height[random.randrange(0,3)]
+        self.ptera_height = [height*0.25,height*0.5]
+        self.rect.centery = self.ptera_height[random.randrange(0,2)]
         self.rect.left = width + self.rect.width
         self.image = self.images[0]
         self.movement = [-1*speed,0]
@@ -295,6 +295,29 @@ class Scoreboard():
             self.image.blit(self.tempimages[s],self.temprect)
             self.temprect.left += self.temprect.width
         self.temprect.left = 0
+        
+class AttScore(Scoreboard):
+    def __init__(self,x=-1,y=-1):
+        self.score = 0
+        self.tempimages,self.temprect = load_sprite_sheet('numbers.png',12,1,11,int(11*6/5),-1)
+        self.image = pygame.Surface((33,int(11*6/5)))
+        self.rect = self.image.get_rect()
+        if x == -1:
+            self.rect.left = width*0.89
+        else:
+            self.rect.left = x
+        if y == -1:
+            self.rect.top = height*0.1
+        else:
+            self.rect.top = y
+            
+    def update(self,score):
+        score_digits = extractDigits(score)
+        self.image.fill(background_col)
+        for s in score_digits:
+            self.image.blit(self.tempimages[s],self.temprect)
+            self.temprect.left += self.temprect.width
+        self.temprect.left = 0
 
 def introscreen():
     temp_dino = Dino(44,47)
@@ -341,6 +364,12 @@ def introscreen():
         clock.tick(FPS)
         if temp_dino.isJumping == False and temp_dino.isBlinking == False:
             gameStart = True
+            
+def attention_callback(attention_value):
+    """this function will be called everytime NeuroPy has a new value for attention"""
+    print ("Value of attention is: ", attention_value)
+    att = attention_value
+    return None
 
 def gameplay():
     global high_score
@@ -351,6 +380,7 @@ def gameplay():
     playerDino = Dino(44,47)
     new_ground = Ground(-1*gamespeed)
     scb = Scoreboard()
+    attScore = AttScore(width*0.66)
     highsc = Scoreboard(width*0.78)
     counter = 0
 
@@ -379,21 +409,25 @@ def gameplay():
     while not gameQuit:
         while startMenu:
             pass
+        att = 0
         while not gameOver:
             if pygame.display.get_surface() == None:
                 print("Couldn't load display surface")
                 gameQuit = True
                 gameOver = True
             else:
-                attention = neuropy.attention
-                print(attention)
-                if attention >= 10:
+                sleep(0.005)
+                if(att != neuropy.attention):
+                    data.append(att)
+                    att = neuropy.attention
+                if neuropy.attention >= 45:
                     #if event.key == pygame.K_SPACE:
                     if playerDino.rect.bottom == int(0.98*height):
                             playerDino.isJumping = True
                             if pygame.mixer.get_init() != None:
                                 jump_sound.play()
                             playerDino.movement[1] = -1*playerDino.jumpSpeed
+                            
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         gameQuit = True
@@ -403,9 +437,6 @@ def gameplay():
                             #if not (playerDino.isJumping and playerDino.isDead):
                                 #playerDino.isDucking = False
 
-                    if event.type == pygame.KEYUP:
-                        if event.key == pygame.K_DOWN:
-                            playerDino.isDucking = False
             for c in cacti:
                 c.movement[0] = -1*gamespeed
                 if pygame.sprite.collide_mask(playerDino,c):
@@ -420,17 +451,17 @@ def gameplay():
                     if pygame.mixer.get_init() != None:
                         die_sound.play()
 
-            if len(cacti) < 2:
+            if len(cacti) < 2 and counter > 200:
                 if len(cacti) == 0:
                     last_obstacle.empty()
                     last_obstacle.add(Cactus(gamespeed,40,40))
                 else:
                     for l in last_obstacle:
-                        if l.rect.right < width*0.7 and random.randrange(0,50) == 10:
+                        if l.rect.right < width*0.7 and random.randrange(0,50) == 10:   
                             last_obstacle.empty()
                             last_obstacle.add(Cactus(gamespeed, 40, 40))
 
-            if len(pteras) == 0 and random.randrange(0,200) == 10 and counter > 500:
+            if len(pteras) == 0 and random.randrange(0,200) == 10 and counter > 1000:
                 for l in last_obstacle:
                     if l.rect.right < width*0.8:
                         last_obstacle.empty()
@@ -440,11 +471,12 @@ def gameplay():
                 Cloud(width,random.randrange(height/5,height/2))
 
             playerDino.update()
-            #cacti.update()
-            #pteras.update()
+            cacti.update()
+            pteras.update()
             clouds.update()
             new_ground.update()
             scb.update(playerDino.score)
+            attScore.update(neuropy.attention*100)
             highsc.update(high_score)
 
             if pygame.display.get_surface() != None:
@@ -452,11 +484,12 @@ def gameplay():
                 new_ground.draw()
                 clouds.draw(screen)
                 scb.draw()
+                attScore.draw()
                 if high_score != 0:
                     highsc.draw()
                     screen.blit(HI_image,HI_rect)
                 cacti.draw(screen)
-                #pteras.draw(screen)
+                pteras.draw(screen)
                 playerDino.draw()
 
                 pygame.display.update()
@@ -474,7 +507,6 @@ def gameplay():
             counter = (counter + 1)
 
         if gameQuit:
-            neuropy.stop()
             break
 
         while gameOver:
@@ -487,6 +519,11 @@ def gameplay():
                     if event.type == pygame.QUIT:
                         gameQuit = True
                         gameOver = False
+                        neuropy.stop()
+                        file = open("data.txt", "w")
+                        for i in data:
+                            if(i != 0):
+                                file.write("%d\n" % i)
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
                             gameQuit = True
@@ -508,7 +545,9 @@ def gameplay():
     quit()
 
 def main():
+    neuropy.setCallBack("attention", attention_callback)
     neuropy.start()
+    sleep(3)
     isGameQuit = introscreen()
     if not isGameQuit:
         gameplay()
