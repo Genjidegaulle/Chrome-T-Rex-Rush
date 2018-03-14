@@ -8,7 +8,7 @@ from pygame import *
 from time import sleep
 from NeuroPy import NeuroPy
 
-neuropy = NeuroPy("COM4")
+neuropy = NeuroPy("COM3")
 data = []
 
 pygame.init()
