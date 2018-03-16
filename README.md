@@ -30,8 +30,10 @@ To run this game:
 ### Developed by: 
 Shivam Shekhar  
 Email: shivam.shekhar.ece14@itbhu.ac.in 
+
 Modified by:
 Team 1 Forever!! (for our COGS 189 Project)
+
 David Liau, Shaquile Phuong, Alejandro Panduro, Miguel Ramos, Joshua Tjong, Jeffrey Lu
 
 #### Credits:
