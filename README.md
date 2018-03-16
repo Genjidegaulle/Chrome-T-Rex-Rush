@@ -5,7 +5,7 @@
 ![](https://github.com/shivamshekhar/Chrome-T-Rex-Rush/raw/master/screenshot.gif)
 
 ### Description:
-A recreated version of the famous Chrome T-Rex in Python 
+A recreated version of the famous Chrome T-Rex in Python. We've edited this to read your brain waves and measure your attention! 
 
 ### Technology:
 Built using pygame library
@@ -19,16 +19,20 @@ Windows/Linux
 ### Instructions and Prerequisites:   
 To run this game:  
 * Make sure you have Python installed alongwith pygame (http://www.pygame.org/) library
-* Run main.py
+* Make sure you have NeuroPy installed, as well as a headset (i.e. Neurosky Headset).
+* Run main.py if you want the light version
+* Run TritonRush.py if you want the meme version
 
 ##### Controls:
-* Press UP or SPACE to make T-Rex jump over the obstacles
-* Press DOWN key to crouch
+* Focus (Center your attention!) to avoid the cacti or pterodactyls.
 * Avoid getting hit by obstacles. 
 
 ### Developed by: 
 Shivam Shekhar  
-Email: shivam.shekhar.ece14@itbhu.ac.in   
+Email: shivam.shekhar.ece14@itbhu.ac.in 
+Modified by:
+Team 1 Forever!! (for our COGS 189 Project)
+David Liau, Shaquile Phuong, Alejandro Panduro, Miguel Ramos, Joshua Tjong, Jeffrey Lu
 
 #### Credits:
 * Sprites : https://chromedino.com/assets/offline-sprite-2x-black.png
